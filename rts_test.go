@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"github.com/galeone/rts"
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -34,6 +35,10 @@ func init() {
 	expectedGeneration, e = ioutil.ReadFile("expected_out")
 	if e != nil {
 		panic(e.Error())
+	}
+	token := os.Getenv("GH_TOKEN")
+	if token != "" {
+		headerMap["Authorization"] = "Basic " + os.Getenv("GH_TOKEN")
 	}
 }
 
