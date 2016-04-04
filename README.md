@@ -1,5 +1,8 @@
 # RTS: Request to Struct
 
+[![GoDoc](https://godoc.org/github.com/galeone/rts?status.svg)](https://godoc.org/github.com/galeone/rts)
+[![Build Status](https://travis-ci.org/galeone/rts.svg?branch=master)](https://travis-ci.org/galeone/rts)
+
 Generate Go structs definitions from JSON server responses.
 
 RTS defines type names using the specified routes and skipping numbers.
