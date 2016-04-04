@@ -32,13 +32,15 @@ var (
 
 func init() {
 	var e error
-	expectedGeneration, e = ioutil.ReadFile("expected_out")
-	if e != nil {
-		panic(e.Error())
-	}
 	token := os.Getenv("GH_TOKEN")
 	if token != "" {
 		headerMap["Authorization"] = "Basic " + os.Getenv("GH_TOKEN")
+		expectedGeneration, e = ioutil.ReadFile("expectedAuth_out")
+	} else {
+		expectedGeneration, e = ioutil.ReadFile("expected_out")
+	}
+	if e != nil {
+		panic(e.Error())
 	}
 }
 
@@ -51,6 +53,6 @@ func TestDo(t *testing.T) {
 	}
 
 	if !bytes.Equal(file, expectedGeneration) {
-		t.Error("Result shold be equal, but they differs")
+		t.Errorf("Results should be equal, but they differs")
 	}
 }

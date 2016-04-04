@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/ChimeraCoder/gojson"
 	"github.com/nerdzeu/nerdz-api/utils"
+	"go/format"
 	"net/http"
 	"strconv"
 	"strings"
@@ -73,7 +74,9 @@ func Do(pkg, server string, routes []string, headerMap map[string]string) ([]byt
 			structs = append(structs, buff...)
 		}
 	}
+
 	fileContent := string(structs)
 	fileContent = strings.Replace(fileContent, "}\npackage "+pkg, "}", -1)
-	return []byte(fileContent), nil
+
+	return format.Source([]byte(fileContent))
 }
