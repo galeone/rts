@@ -51,6 +51,10 @@ func main() {
 	content, _ := ioutil.ReadFile(routesFile)
 	routes := strings.Split(string(content), "\n")
 
+	if len(routes) == 1 && routes[0] == "" {
+		routes = append(routes, "/")
+	}
+
 	// parse Headers
 	headerArr := strings.Split(headers, "\n")
 	var headerMap = make(map[string]string)

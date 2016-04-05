@@ -31,10 +31,13 @@ import (
 // the struct definitions.
 func Do(pkg, server string, routes []string, headerMap map[string]string) ([]byte, error) {
 	var structs []byte
-	client := &http.Client{}
-	unnamedStruct := 0
 	var res *http.Response
 	var e error
+
+	client := &http.Client{}
+	unnamedStruct := 0
+	server = strings.TrimRight(server, "/")
+
 	for _, route := range routes {
 		if route != "" {
 			req, _ := http.NewRequest("GET", server+route, nil)
