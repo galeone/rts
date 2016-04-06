@@ -1,0 +1,10 @@
+hash: 705455ec08463b9d7df702ecb3f7e73e25bf5507765ff262af75d89121ce0d62
+updated: 2016-04-06T15:56:17.331839976+02:00
+imports:
+- name: github.com/ChimeraCoder/gojson
+  version: adcbb96cc1a70c55772ce9d99193acb92b7ac61b
+- name: github.com/nerdzeu/nerdz-api
+  version: adcbb96cc1a70c55772ce9d99193acb92b7ac61b
+  subpackages:
+  - utils
+devImports: []

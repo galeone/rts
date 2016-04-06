@@ -1,0 +1,6 @@
+package: github.com/galeone/rts
+import:
+- package: github.com/ChimeraCoder/gojson
+- package: github.com/nerdzeu/nerdz-api
+  subpackages:
+  - utils
