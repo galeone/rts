@@ -17,65 +17,36 @@ licenses expressed under Section 1.12 of the MPL v2.
 package rts
 
 import (
-	"fmt"
-	"github.com/ChimeraCoder/gojson"
-	"github.com/nerdzeu/nerdz-api/utils"
 	"go/format"
-	"net/http"
-	"strconv"
 	"strings"
+	"sync"
 )
 
 // Do exexutes the GET request to every route defined concatenated with server name.
 // It passes headers in every request and returns a file whose package is pkg containing
 // the struct definitions.
 func Do(pkg, server string, routes []string, headerMap map[string]string) ([]byte, error) {
-	var structs []byte
-	var res *http.Response
-	var e error
-
-	client := &http.Client{}
-	unnamedStruct := 0
 	server = strings.TrimRight(server, "/")
+	routes = deleteEmpty(routes)
 
-	for _, route := range routes {
-		if route != "" {
-			req, _ := http.NewRequest("GET", server+route, nil)
-			// set headers
-			for key, value := range headerMap {
-				req.Header.Set(key, value)
-			}
+	var wg sync.WaitGroup
+	n := len(routes)
+	wg.Add(n)
+	c := make(chan result, n)
+	defer close(c)
 
-			if res, e = client.Do(req); e != nil {
-				return nil, e
-			}
-			defer res.Body.Close()
+	for i := 0; i < n; i++ {
+		go requestConverter(server, routes[i], pkg, headerMap, c, &wg)
+	}
+	wg.Wait()
 
-			if res.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("Request: %s%s returned status %d\n", server, route, res.StatusCode)
-			}
-
-			// Generate structName
-			routeElements := strings.Split(route, "/")
-			var structName string
-			for _, elem := range routeElements {
-				_, e = strconv.ParseInt(elem, 10, 64)
-				// Skip numbers
-				if e == nil {
-					continue
-				}
-				structName += utils.UpperFirst(elem)
-			}
-			if structName == "" {
-				unnamedStruct++
-				structName = "Foo" + strconv.Itoa(unnamedStruct)
-			}
-			var buff []byte
-			if buff, e = json2struct.Generate(res.Body, structName, pkg); e != nil {
-				return nil, e
-			}
-			structs = append(structs, buff...)
+	var structs []byte
+	for i := 0; i < n; i++ {
+		r := <-c
+		if r.err != nil {
+			return r.res, r.err
 		}
+		structs = append(structs, r.res...)
 	}
 
 	fileContent := string(structs)
