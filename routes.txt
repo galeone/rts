@@ -1,2 +1,2 @@
 /
-/repos/galeone/igor
+/repos/:user/:repo galeone igor

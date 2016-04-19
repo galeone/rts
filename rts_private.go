@@ -12,6 +12,7 @@ licenses expressed under Section 1.12 of the MPL v2.
 package rts
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/ChimeraCoder/gojson"
 	"net/http"
@@ -41,11 +42,47 @@ func deleteEmpty(s []string) []string {
 	return r
 }
 
-func requestConverter(server, route, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup) {
+// replaceParameters replace parameters in the route line if present
+// it returns the path with parameter replaced and the path with parameter
+// (without ':') to build the name
+func replaceParameters(line string) (string, string) {
+	line = strings.TrimSpace(line)
+
+	// if no parameters
+	if !strings.Contains(line, " ") {
+		return line, line
+	}
+
+	var ret bytes.Buffer
+
+	pathAndParams := strings.Split(line, " ")
+	parametersFound := 0
+	path := pathAndParams[0]
+	for i, l := 0, len(path); i < l; i++ {
+		if path[i] == ':' {
+			for ; i < l && path[i] != '/'; i++ {
+			}
+			// replace parameter with its value
+			ret.WriteString(pathAndParams[1+parametersFound])
+			parametersFound++
+			if i < l && path[i] == '/' {
+				ret.WriteRune('/')
+			}
+		} else {
+			ret.WriteByte(path[i])
+		}
+	}
+
+	return ret.String(), strings.Replace(path, ":", "", -1)
+}
+
+func requestConverter(server, line, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup) {
 	// Decrement the counter when goroutine ends
 	defer wg.Done()
 
-	req, _ := http.NewRequest("GET", server+route, nil)
+	requestPath, parametricRequest := replaceParameters(line)
+
+	req, _ := http.NewRequest("GET", server+requestPath, nil)
 	// set headers
 	for key, value := range headerMap {
 		req.Header.Set(key, value)
@@ -64,15 +101,15 @@ func requestConverter(server, route, pkg string, headerMap map[string]string, c 
 	if res.StatusCode != http.StatusOK {
 		c <- result{
 			nil,
-			fmt.Errorf("Request: %s%s returned status %d\n", server, route, res.StatusCode),
+			fmt.Errorf("Request: %s%s returned status %d\n", server, requestPath, res.StatusCode),
 		}
 		return
 	}
 
 	// Generate structName
-	routeElements := strings.Split(route, "/")
+	requestPathElements := strings.Split(parametricRequest, "/")
 	var structName string
-	for _, elem := range routeElements {
+	for _, elem := range requestPathElements {
 		_, e = strconv.ParseInt(elem, 10, 64)
 		// Skip numbers
 		if e == nil {

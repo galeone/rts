@@ -33,7 +33,7 @@ type Foo1 struct {
 	UserURL                          string `json:"user_url"`
 }
 
-type ReposGaleoneIgor struct {
+type ReposUserRepo struct {
 	ArchiveURL       string      `json:"archive_url"`
 	AssigneesURL     string      `json:"assignees_url"`
 	BlobsURL         string      `json:"blobs_url"`

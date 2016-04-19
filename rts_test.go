@@ -21,9 +21,9 @@ import (
 
 var (
 	server = "https://api.github.com"
-	routes = []string{
+	lines  = []string{
 		"/",
-		"/repos/galeone/igor",
+		"/repos/:user/:repo galeone igor",
 	}
 	pkg                = "example"
 	headerMap          = map[string]string{}
@@ -47,7 +47,7 @@ func init() {
 func TestDo(t *testing.T) {
 	var file []byte
 	var e error
-	file, e = rts.Do(pkg, server, routes, headerMap)
+	file, e = rts.Do(pkg, server, lines, headerMap)
 	if e != nil {
 		t.Fatalf("No error expected but got: %s", e.Error())
 	}
