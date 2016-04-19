@@ -5,8 +5,10 @@
 
 Generate Go structs definitions from JSON server responses.
 
-RTS defines type names using the specified routes and skipping numbers.
+RTS defines type names using the specified lines in the route file and skipping numbers.
 e.g: a request to a route like `/users/1/posts` generates `type UsersPosts`
+
+It supports *parameters*: a line like `/users/:user/posts/:pid 1 200` generates `type UsersUserPostsPid` from the response to the request `GET /users/1/posts/200`.
 
 RTS supports headers personalization as well, thus it can be used to generate types from responses protected by some authorization method
 
@@ -21,7 +23,7 @@ RTS supports headers personalization as well, thus it can be used to generate ty
 ```go
 import "github.com/galeone/rts"
 
-byteFile, err := rts.Do(pkg, server, routes, headerMap)
+byteFile, err := rts.Do(pkg, server, lines, headerMap)
 ```
 
 # CLI Usage
@@ -47,7 +49,7 @@ rts [options]
 *routes.txt*:
 ```
 /
-/repos/galeone/igor
+/repos/:user/:repo galeone igor
 ```
 
 Run:
@@ -93,7 +95,7 @@ type Foo1 struct {
 	UserURL                          string `json:"user_url"`
 }
 
-type ReposGaleoneIgor struct {
+type ReposUserRepo struct {
 	ArchiveURL       string      `json:"archive_url"`
 	AssigneesURL     string      `json:"assignees_url"`
 	BlobsURL         string      `json:"blobs_url"`

@@ -23,20 +23,22 @@ import (
 )
 
 // Do exexutes the GET request to every route defined concatenated with server name.
+// lines is a slice that contains routes in the format: `/path/to/request`
+// or `/path/:parameter1/:parameter2/request parameter1Value parameter2Value`
 // It passes headers in every request and returns a file whose package is pkg containing
 // the struct definitions.
-func Do(pkg, server string, routes []string, headerMap map[string]string) ([]byte, error) {
+func Do(pkg, server string, lines []string, headerMap map[string]string) ([]byte, error) {
 	server = strings.TrimRight(server, "/")
-	routes = deleteEmpty(routes)
+	lines = deleteEmpty(lines)
 
 	var wg sync.WaitGroup
-	n := len(routes)
+	n := len(lines)
 	wg.Add(n)
 	c := make(chan result, n)
 	defer close(c)
 
 	for i := 0; i < n; i++ {
-		go requestConverter(server, routes[i], pkg, headerMap, c, &wg)
+		go requestConverter(server, lines[i], pkg, headerMap, c, &wg)
 	}
 	wg.Wait()
 
