@@ -1,6 +1,6 @@
 hash: 6da8453a69ea4860205235e92ea26879e7cc5ed4e3dbd430206e228c8d06c474
-updated: 2016-04-07T14:18:42.446740743+02:00
+updated: 2016-06-08T11:40:40.451544784+02:00
 imports:
 - name: github.com/ChimeraCoder/gojson
-  version: 270eb01cf6b92e10d24fffe5be22958620efd96e
+  version: e3edd6d81d73d2eac949d6c40c674bc54809cead
 devImports: []
