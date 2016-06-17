@@ -27,6 +27,7 @@ var (
 	routesFile string
 	headers    string
 	out        string
+	insecure   bool
 )
 
 func init() {
@@ -36,6 +37,7 @@ func init() {
 	flag.StringVar(&headers, "headers", "", "Headers to add in every request")
 	flag.StringVar(&out, "out", "", "Output file. Stdout is used if not specified")
 	flag.StringVar(&pkgName, "pkg", "main", "Package name")
+	flag.BoolVar(&insecure, "insecure", false, "Disables TLS Certificate check for HTTPS, use in case HTTPS Server Certificate is signed by an unknown authority")
 }
 
 func main() {
@@ -69,7 +71,7 @@ func main() {
 		}
 	}
 
-	structs, e := rts.Do(pkgName, server, routes, headerMap)
+	structs, e := rts.Do(pkgName, server, routes, headerMap, insecure)
 	if e != nil {
 		fmt.Println(e.Error())
 		os.Exit(1)
