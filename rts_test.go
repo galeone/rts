@@ -35,7 +35,7 @@ func init() {
 	var e error
 	token := os.Getenv("GH_TOKEN")
 	if token != "" {
-		headerMap["Authorization"] = "Basic " + os.Getenv("GH_TOKEN")
+		headerMap["Authorization"] = "token " + os.Getenv("GH_TOKEN")
 		expectedGeneration, e = ioutil.ReadFile("expectedAuth_out")
 	} else {
 		expectedGeneration, e = ioutil.ReadFile("expected_out")
