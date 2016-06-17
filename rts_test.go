@@ -28,6 +28,7 @@ var (
 	pkg                = "example"
 	headerMap          = map[string]string{}
 	expectedGeneration []byte
+	insecure           = false
 )
 
 func init() {
@@ -47,7 +48,7 @@ func init() {
 func TestDo(t *testing.T) {
 	var file []byte
 	var e error
-	file, e = rts.Do(pkg, server, lines, headerMap)
+	file, e = rts.Do(pkg, server, lines, headerMap, insecure)
 	if e != nil {
 		t.Fatalf("No error expected but got: %s", e.Error())
 	}

@@ -13,6 +13,7 @@ package rts
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"github.com/ChimeraCoder/gojson"
 	"net/http"
@@ -76,7 +77,7 @@ func replaceParameters(line string) (string, string) {
 	return ret.String(), strings.Replace(path, ":", "", -1)
 }
 
-func requestConverter(server, line, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup) {
+func requestConverter(server, line, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup, insecure bool) {
 	// Decrement the counter when goroutine ends
 	defer wg.Done()
 
@@ -88,7 +89,11 @@ func requestConverter(server, line, pkg string, headerMap map[string]string, c c
 		req.Header.Set(key, value)
 	}
 
-	client := &http.Client{}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: insecure},
+	}
+
+	client := &http.Client{Transport: tr}
 	var e error
 	var res *http.Response
 	if res, e = client.Do(req); e != nil {

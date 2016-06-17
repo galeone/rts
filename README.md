@@ -12,6 +12,10 @@ It supports *parameters*: a line like `/users/:user/posts/:pid 1 200` generates 
 
 RTS supports headers personalization as well, thus it can be used to generate types from responses protected by some authorization method
 
+Updated: 6/17/2016 by Krish Verma <https://github.com/kverma>
+
+In case the JSON server is HTTPS with unknown certificate signing authority, pass the -insecure flag to disable TLS certificate check
+
 # Install
 
 ## CLI Application
@@ -42,6 +46,8 @@ rts [options]
     	Routes to request. One per line (default "routes.txt")
   -server string
     	sets the server address (default "http://localhost:9090")
+  -insecure
+        Disables TLS Certificate check for HTTPS, use in case HTTPS Server Certificate is signed by an unknown authority
 ```
 
 ## Example
