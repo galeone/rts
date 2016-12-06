@@ -28,6 +28,7 @@ var (
 	headers    string
 	out        string
 	insecure   bool
+	subStruct  bool
 )
 
 func init() {
@@ -38,6 +39,7 @@ func init() {
 	flag.StringVar(&out, "out", "", "Output file. Stdout is used if not specified")
 	flag.StringVar(&pkgName, "pkg", "main", "Package name")
 	flag.BoolVar(&insecure, "insecure", false, "Disables TLS Certificate check for HTTPS, use in case HTTPS Server Certificate is signed by an unknown authority")
+	flag.BoolVar(&subStruct, "substruct", false, "Creates types for sub-structs")
 }
 
 func main() {
@@ -71,7 +73,7 @@ func main() {
 		}
 	}
 
-	structs, e := rts.Do(pkgName, server, routes, headerMap, insecure)
+	structs, e := rts.Do(pkgName, server, routes, headerMap, insecure, subStruct)
 	if e != nil {
 		fmt.Println(e.Error())
 		os.Exit(1)

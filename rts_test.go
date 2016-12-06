@@ -29,6 +29,7 @@ var (
 	headerMap          = map[string]string{}
 	expectedGeneration []byte
 	insecure           = false
+	subStruct          = false
 )
 
 func init() {
@@ -48,12 +49,13 @@ func init() {
 func TestDo(t *testing.T) {
 	var file []byte
 	var e error
-	file, e = rts.Do(pkg, server, lines, headerMap, insecure)
+	file, e = rts.Do(pkg, server, lines, headerMap, insecure, subStruct)
 	if e != nil {
 		t.Fatalf("No error expected but got: %s", e.Error())
 	}
 
 	if !bytes.Equal(file, expectedGeneration) {
 		t.Errorf("Results should be equal, but they differs")
+		t.Error(string(file))
 	}
 }

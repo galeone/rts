@@ -27,7 +27,7 @@ import (
 // or `/path/:parameter1/:parameter2/request parameter1Value parameter2Value`
 // It passes headers in every request and returns a file whose package is pkg containing
 // the struct definitions.
-func Do(pkg, server string, lines []string, headerMap map[string]string, insecure bool) ([]byte, error) {
+func Do(pkg, server string, lines []string, headerMap map[string]string, insecure, subStruct bool) ([]byte, error) {
 	server = strings.TrimRight(server, "/")
 	lines = deleteEmpty(lines)
 
@@ -38,7 +38,7 @@ func Do(pkg, server string, lines []string, headerMap map[string]string, insecur
 	defer close(c)
 
 	for i := 0; i < n; i++ {
-		go requestConverter(server, lines[i], pkg, headerMap, c, &wg, insecure)
+		go requestConverter(server, lines[i], pkg, headerMap, c, &wg, insecure, subStruct)
 	}
 	wg.Wait()
 

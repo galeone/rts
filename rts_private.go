@@ -77,7 +77,7 @@ func replaceParameters(line string) (string, string) {
 	return ret.String(), strings.Replace(path, ":", "", -1)
 }
 
-func requestConverter(server, line, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup, insecure bool) {
+func requestConverter(server, line, pkg string, headerMap map[string]string, c chan result, wg *sync.WaitGroup, insecure, subStruct bool) {
 	// Decrement the counter when goroutine ends
 	defer wg.Done()
 
@@ -141,6 +141,7 @@ func requestConverter(server, line, pkg string, headerMap map[string]string, c c
 	}
 
 	var r result
-	r.res, r.err = json2struct.Generate(res.Body, structName, pkg)
+	tagList := []string{"json"}
+	r.res, r.err = gojson.Generate(res.Body, gojson.ParseJson, structName, pkg, tagList, subStruct)
 	c <- r
 }

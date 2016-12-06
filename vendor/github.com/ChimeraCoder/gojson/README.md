@@ -1,8 +1,8 @@
+[![Build Status](https://travis-ci.org/ChimeraCoder/gojson.svg?branch=master)](https://travis-ci.org/ChimeraCoder/gojson)
 gojson
 ======
 
-gojson attempts to generate go struct definitions from json documents
-
+gojson generates go struct definitions from json or yaml documents.
 
 Example
 ----------
