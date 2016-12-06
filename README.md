@@ -38,6 +38,8 @@ rts [options]
     	Headers to add in every request
   -help
     	prints this help
+  -insecure
+    	Disables TLS Certificate check for HTTPS, use in case HTTPS Server Certificate is signed by an unknown authority
   -out string
     	Output file. Stdout is used if not specified
   -pkg string
@@ -46,8 +48,8 @@ rts [options]
     	Routes to request. One per line (default "routes.txt")
   -server string
     	sets the server address (default "http://localhost:9090")
-  -insecure
-        Disables TLS Certificate check for HTTPS, use in case HTTPS Server Certificate is signed by an unknown authority
+  -substruct
+    	Creates types for sub-structs
 ```
 
 ## Example
