@@ -1,22 +1,22 @@
 /*
-RTS: Request to Struct. Generates Go structs from a server response.
-Copyright (C) 2016 Paolo Galeone <nessuno@nerdz.eu>
-
-This Source Code Form is subject to the terms of the Mozilla Public
-License, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
-Exhibit B is not attached; this software is compatible with the
-licenses expressed under Section 1.12 of the MPL v2.
-*/
+ * RTS: Request to Struct. Generates Go structs from a server response.
+ * Copyright (C) 2016-2021 Paolo Galeone <nessuno@nerdz.eu>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * Exhibit B is not attached; this software is compatible with the
+ * licenses expressed under Section 1.12 of the MPL v2.
+ */
 
 package rts_test
 
 import (
 	"bytes"
-	"github.com/galeone/rts"
 	"io/ioutil"
-	"os"
 	"testing"
+
+	"github.com/galeone/rts"
 )
 
 var (
@@ -34,13 +34,7 @@ var (
 
 func init() {
 	var e error
-	token := os.Getenv("GH_TOKEN")
-	if token != "" {
-		headerMap["Authorization"] = "token " + os.Getenv("GH_TOKEN")
-		expectedGeneration, e = ioutil.ReadFile("expectedAuth_out")
-	} else {
-		expectedGeneration, e = ioutil.ReadFile("expected_out")
-	}
+	expectedGeneration, e = ioutil.ReadFile("expected_out")
 	if e != nil {
 		panic(e.Error())
 	}
