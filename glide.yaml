@@ -1,3 +1,0 @@
-package: github.com/galeone/rts
-import:
-- package: github.com/ChimeraCoder/gojson
