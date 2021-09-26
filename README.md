@@ -12,21 +12,13 @@ It supports *parameters*: a line like `/users/:user/posts/:pid 1 200` generates 
 
 RTS supports headers personalization as well, thus it can be used to generate types from responses protected by some authorization method
 
-# Install
+## Install
 
-## CLI Application
+### CLI Application
 
 `go get -u github.com/galeone/rts/cmd/rts`
 
-## Library
-
-```go
-import "github.com/galeone/rts"
-
-byteFile, err := rts.Do(pkg, server, lines, headerMap)
-```
-
-# CLI Usage
+#### CLI Usage
 
 ```
 rts [options]
@@ -48,22 +40,54 @@ rts [options]
     	Creates types for sub-structs
 ```
 
-## Example
+#### Examples
+
+You can invoke `rts` piping from stdin a single JSON (anonymous) and get it converted to a go structure
+
+```
+echo '  {
+    "Book Id": 30558257,
+    "Title": "Unsouled (Cradle, #1)",
+    "Author": "Will Wight",
+    "Author l-f": "Wight, Will",
+    "Additional Authors": "",
+    "BCID": ""
+  }' | ./rts
+```
+
+obtaining
+
+```go
+package main
+
+type Foo1 struct {
+        Additional_Authors string `json:"Additional Authors"`
+        Author             string `json:"Author"`
+        Author_l_f         string `json:"Author l-f"`
+        Bcid               string `json:"BCID"`
+        Book_Id            int64  `json:"Book Id"`
+        Title              string `json:"Title"`
+}
+```
+
+Or you can define a more complex scenario, definining the `routes.txt` file with a line for each (parametric) request and use it as shown below.
 
 *routes.txt*:
-```
+
+```txt
 /
 /repos/:user/:repo galeone igor
 ```
 
 Run:
+
 ```
 rts -server https://api.github.com -pkg example
 ```
 
 Returns:
 
-```
+```go
 package example
 
 type Foo1 struct {
@@ -206,6 +230,14 @@ type ReposUserRepo struct {
 	WatchersCount    int64       `json:"watchers_count"`
 }
 
+```
+
+### Library
+
+```go
+import "github.com/galeone/rts"
+
+byteFile, err := rts.Do(pkg, server, lines, headerMap)
 ```
 
 # License
