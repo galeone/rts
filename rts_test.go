@@ -14,7 +14,6 @@ package rts_test
 import (
 	"bytes"
 	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/galeone/rts"
@@ -35,13 +34,7 @@ var (
 
 func init() {
 	var e error
-	token := os.Getenv("GH_TOKEN")
-	if token != "" {
-		headerMap["Authorization"] = "token " + os.Getenv("GH_TOKEN")
-		expectedGeneration, e = ioutil.ReadFile("expectedAuth_out")
-	} else {
-		expectedGeneration, e = ioutil.ReadFile("expected_out")
-	}
+	expectedGeneration, e = ioutil.ReadFile("expected_out")
 	if e != nil {
 		panic(e.Error())
 	}
