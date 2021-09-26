@@ -146,3 +146,16 @@ func requestConverter(server, line, pkg string, headerMap map[string]string, c c
 	r.res, r.err = gojson.Generate(res.Body, gojson.ParseJson, structName, pkg, tagList, subStruct)
 	c <- r
 }
+
+func jsonToStruct(pkg, json string) result {
+
+	mutex.Lock()
+	unnamedStruct++
+	structName := "Foo" + strconv.Itoa(unnamedStruct)
+	mutex.Unlock()
+
+	var r result
+	tagList := []string{"json"}
+	r.res, r.err = gojson.Generate(strings.NewReader(json), gojson.ParseJson, structName, pkg, tagList, false)
+	return r
+}
