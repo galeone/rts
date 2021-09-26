@@ -12,11 +12,13 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/galeone/rts"
 )
@@ -51,40 +53,68 @@ func main() {
 		return
 	}
 
-	// If the route file does not exists, it does a single request to
-	// the server address
-	content, _ := ioutil.ReadFile(routesFile)
-	routes := strings.Split(string(content), "\n")
+	stdinChan := make(chan string)
+	go func() {
+		scanner := bufio.NewScanner(os.Stdin)
+		stdinLines := ""
+		for scanner.Scan() {
+			stdinLines += scanner.Text()
+		}
+		stdinChan <- stdinLines
+	}()
 
-	if len(routes) == 1 && routes[0] == "" {
-		routes = append(routes, "/")
+	stdinInput := ""
+	select {
+	case <-time.After(time.Millisecond * 500):
+		break
+	case stdinInput = <-stdinChan:
+		break
 	}
 
-	// parse Headers
-	headerArr := strings.Split(headers, "\n")
-	var headerMap = make(map[string]string)
-	for _, headerLine := range headerArr {
-		if headerLine != "" {
-			h := strings.SplitAfterN(headerLine, ":", 2)
-			if len(h) != 2 {
-				fmt.Printf("Malformed header. Expected <key>:<value> Got: %s\n", h[0])
-				os.Exit(1)
+	var structs []byte
+	var err error
+
+	if stdinInput != "" {
+		if structs, err = rts.DoRaw(pkgName, stdinInput); err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+	} else {
+		// If the route file does not exists, it does a single request to
+		// the server address
+		content, _ := ioutil.ReadFile(routesFile)
+		routes := strings.Split(string(content), "\n")
+
+		if len(routes) == 1 && routes[0] == "" {
+			routes = append(routes, "/")
+		}
+
+		// parse Headers
+		headerArr := strings.Split(headers, "\n")
+		var headerMap = make(map[string]string)
+		for _, headerLine := range headerArr {
+			if headerLine != "" {
+				h := strings.SplitAfterN(headerLine, ":", 2)
+				if len(h) != 2 {
+					fmt.Printf("Malformed header. Expected <key>:<value> Got: %s\n", h[0])
+					os.Exit(1)
+				}
+				headerMap[strings.Split(h[0], ":")[0]] = h[1]
 			}
-			headerMap[strings.Split(h[0], ":")[0]] = h[1]
+		}
+
+		if structs, err = rts.Do(pkgName, server, routes, headerMap, insecure, subStruct); err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
 		}
 	}
 
-	structs, e := rts.Do(pkgName, server, routes, headerMap, insecure, subStruct)
-	if e != nil {
-		fmt.Println(e.Error())
-		os.Exit(1)
-	}
+	// Output destination
 	if out == "" {
 		fmt.Print(string(structs))
 		return
 	}
-
-	if e = ioutil.WriteFile(out, structs, 0644); e != nil {
+	if e := ioutil.WriteFile(out, structs, 0644); e != nil {
 		fmt.Println(e.Error())
 		os.Exit(1)
 	}
