@@ -1,6 +1,6 @@
 /*
  * RTS: Request to Struct. Generates Go structs from a server response.
- * Copyright (C) 2016-2021 Paolo Galeone <nessuno@nerdz.eu>
+ * Copyright (C) 2016-2022 Paolo Galeone <nessuno@nerdz.eu>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -143,7 +143,8 @@ func requestConverter(server, line, pkg string, headerMap map[string]string, c c
 
 	var r result
 	tagList := []string{"json"}
-	r.res, r.err = gojson.Generate(res.Body, gojson.ParseJson, structName, pkg, tagList, subStruct)
+	convertFloats := true
+	r.res, r.err = gojson.Generate(res.Body, gojson.ParseJson, structName, pkg, tagList, subStruct, convertFloats)
 	c <- r
 }
 
@@ -156,6 +157,8 @@ func jsonToStruct(pkg, json string) result {
 
 	var r result
 	tagList := []string{"json"}
-	r.res, r.err = gojson.Generate(strings.NewReader(json), gojson.ParseJson, structName, pkg, tagList, false)
+	convertFloats := true
+	subStruct := true
+	r.res, r.err = gojson.Generate(strings.NewReader(json), gojson.ParseJson, structName, pkg, tagList, subStruct, convertFloats)
 	return r
 }

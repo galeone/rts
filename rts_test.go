@@ -1,6 +1,6 @@
 /*
  * RTS: Request to Struct. Generates Go structs from a server response.
- * Copyright (C) 2016-2021 Paolo Galeone <nessuno@nerdz.eu>
+ * Copyright (C) 2016-2022 Paolo Galeone <nessuno@nerdz.eu>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@ package rts_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/galeone/rts"
@@ -29,12 +29,12 @@ var (
 	headerMap          = map[string]string{}
 	expectedGeneration []byte
 	insecure           = false
-	subStruct          = false
+	subStruct          = true
 )
 
 func init() {
 	var e error
-	expectedGeneration, e = ioutil.ReadFile("expected_out")
+	expectedGeneration, e = os.ReadFile("expected_out")
 	if e != nil {
 		panic(e.Error())
 	}

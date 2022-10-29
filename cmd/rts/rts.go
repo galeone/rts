@@ -1,6 +1,6 @@
 /*
  * RTS: Request to Struct. Generates Go structs from a server response.
- * Copyright (C) 2016-2021 Paolo Galeone <nessuno@nerdz.eu>
+ * Copyright (C) 2016-2022 Paolo Galeone <nessuno@nerdz.eu>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io/ioutil"
+
 	"os"
 	"strings"
 	"time"
@@ -82,7 +82,7 @@ func main() {
 	} else {
 		// If the route file does not exists, it does a single request to
 		// the server address
-		content, _ := ioutil.ReadFile(routesFile)
+		content, _ := os.ReadFile(routesFile)
 		routes := strings.Split(string(content), "\n")
 
 		if len(routes) == 1 && routes[0] == "" {
@@ -114,7 +114,7 @@ func main() {
 		fmt.Print(string(structs))
 		return
 	}
-	if e := ioutil.WriteFile(out, structs, 0644); e != nil {
+	if e := os.WriteFile(out, structs, 0644); e != nil {
 		fmt.Println(e.Error())
 		os.Exit(1)
 	}
